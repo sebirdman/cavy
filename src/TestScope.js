@@ -124,7 +124,7 @@ export default class TestScope {
   // promise if the component is found, rejects the promise after
   // this.waitTime if the component is never found in the test hook
   // store.
-  findComponent(identifier) {
+  async findComponent(identifier) {
     let promise = new Promise((resolve, reject) => {
       let startTime = Date.now();
       let loop = setInterval(() => {
@@ -138,7 +138,7 @@ export default class TestScope {
             clearInterval(loop);
           }
         }
-      }, 100);
+      }, 10);
     });
 
     return promise;
