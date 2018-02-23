@@ -231,6 +231,34 @@ export default class TestScope {
     return !!component;
   }
 
+  // Public: ask cavy-cli to take a screenshot
+  //
+  // path - path for the image. the cli will already group by platform.
+  //
+  // Returns a promise, use await when calling this function.
+  async takeImage(path) {
+    await this.pause(500);
+    this.sendCommand({
+      name: path,
+      platform: Platform.OS,
+      command: 'screenshot',
+    });
+    await this.pause(500);
+  }
+
+  sendCommand(command) {
+    const url = 'http://127.0.0.1:8082/command';
+    const options = {
+      method: 'POST',
+      body: JSON.stringify(command),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+
+    fetch(url, options)
+  }
+
   // Public: Check for the absence of a component. Will potentially halt your
   // test for your maximum wait time.
   //
