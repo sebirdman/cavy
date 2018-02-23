@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 // Internal: Wrapper around an app being tested, and a bunch of test cases.
 //
 // The TestScope also includes all the functions available when writing your
@@ -61,6 +63,7 @@ export default class TestScope {
         errorCount += 1;
       }
       await this.component.clearAsync();
+      await this.pause(5000);
       this.component.reRender();
     }
 
@@ -127,18 +130,13 @@ export default class TestScope {
   findComponent(identifier) {
     let promise = new Promise((resolve, reject) => {
       let startTime = Date.now();
-      let loop = setInterval(() => {
+      while (Date.now() - startTime < this.waitTime) {
         const component = this.testHooks.get(identifier);
         if (component) {
-          clearInterval(loop);
           return resolve(component);
-        } else {
-          if (Date.now() - startTime >= this.waitTime) {
-            reject(new ComponentNotFoundError(`Could not find component with identifier ${identifier}`));
-            clearInterval(loop);
-          }
         }
-      }, 100);
+      }
+      reject(new ComponentNotFoundError(`Could not find component with identifier ${identifier}`));
     });
 
     return promise;
